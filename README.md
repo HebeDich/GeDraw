@@ -1,10 +1,6 @@
 # GeDraw
 
 <p align="center">
-  <img src="public/images/logo.png" alt="GeDraw Logo" width="120" />
-</p>
-
-<p align="center">
   <strong>✨ GeDraw - Gemini + Draw | 智能 AI 对话与创意绘图平台</strong>
 </p>
 
@@ -150,7 +146,7 @@ services:
     container_name: gedraw
     build: .
     ports:
-      - "50002:3000"  # 主机端口:容器端口
+      - "3000:3000"  # 主机端口:容器端口
     environment:
       DATABASE_URL: "postgres://postgres:postgres@db:5432/gedraw"
       # ... 其他环境变量
@@ -160,7 +156,7 @@ services:
   db:
     image: postgres:16.8-alpine
     ports:
-      - "50433:5432"
+      - "5432:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -203,7 +199,7 @@ server {
     ssl_certificate_key /path/to/key.pem;
 
     location / {
-        proxy_pass http://127.0.0.1:50002;
+        proxy_pass http://127.0.0.1:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
@@ -286,8 +282,4 @@ gedraw/
 感谢所有贡献者和使用者的支持！
 
 ---
-
-<p align="center">
-  Made with ❤️ by GeDraw Team
-</p>
 
