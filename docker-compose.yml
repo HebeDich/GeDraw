@@ -1,0 +1,62 @@
+services:
+  app:
+    container_name: gedraw
+    image: hebedich/gedraw:latest
+    # build:
+    #   context: . # Use the current directory as build context
+    #   dockerfile: Dockerfile # Specify the Dockerfile name
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    volumes:
+      - ./public:/app/public
+    environment:
+      DATABASE_URL: "postgres://postgres:postgres@db:5432/gedraw"
+      AUTH_SECRET: ${AUTH_SECRET}
+      ADMIN_CODE: ${ADMIN_CODE}
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
+      AUTH_TRUST_HOST: ${AUTH_TRUST_HOST}
+      EMAIL_AUTH_STATUS: ${EMAIL_AUTH_STATUS}
+      FEISHU_AUTH_STATUS: ${FEISHU_AUTH_STATUS}
+      FEISHU_CLIENT_ID: ${FEISHU_CLIENT_ID}
+      FEISHU_CLIENT_SECRET: ${FEISHU_CLIENT_SECRET}
+      WECOM_AUTH_STATUS: ${WECOM_AUTH_STATUS}
+      WECOM_CLIENT_ID: ${WECOM_CLIENT_ID}
+      WECOM_AGENT_ID: ${WECOM_AGENT_ID}
+      WECOM_CLIENT_SECRET: ${WECOM_CLIENT_SECRET}
+      DINGDING_AUTH_STATUS: ${DINGDING_AUTH_STATUS}
+      DINGDING_CLIENT_ID: ${DINGDING_CLIENT_ID}
+      DINGDING_CLIENT_SECRET: ${DINGDING_CLIENT_SECRET}
+    restart: unless-stopped
+    networks:
+      - gedraw-network
+
+  db:
+    container_name: gedraw-db
+    image: postgres:16.8-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: gedraw
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+      - ./docker:/docker-entrypoint-initdb.d/
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d gedraw" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - gedraw-network
+
+volumes:
+  postgres_data:
+
+
+networks:
+  gedraw-network:
+    driver: bridge
